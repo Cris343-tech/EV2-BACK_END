@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Editar comida</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .contenedor {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            color: #2196f3;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .checkbox {
+            width: auto;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 5px;
+            background: #2196f3;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .volver {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        <h1>
+            Editar comida
+        </h1>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <label>
+                Nombre
+            </label>
+
+            <input
+                type="text"
+                name="nombre"
+                value="{{ comida.nombre }}"
+                required
+            >
+
+
+            <label>
+                Descripción
+            </label>
+
+            <textarea
+                name="descripcion"
+                required
+            >{{ comida.descripcion }}</textarea>
+
+
+            <label>
+                Precio
+            </label>
+
+            <input
+                type="number"
+                name="precio"
+                step="0.01"
+                min="0"
+                value="{{ comida.precio }}"
+                required
+            >
+
+
+            <label>
+                Categoría
+            </label>
+
+            <input
+                type="text"
+                name="categoria"
+                value="{{ comida.categoria }}"
+                required
+            >
+
+
+            <label>
+
+                <input
+                    class="checkbox"
+                    type="checkbox"
+                    name="disponible"
+                    {% if comida.disponible %}
+                        checked
+                    {% endif %}
+                >
+
+                Producto disponible
+
+            </label>
+
+
+            <button type="submit">
+                Guardar cambios
+            </button>
+
+        </form>
+
+
+        <a
+            class="volver"
+            href="{% url 'lista_comidas' %}"
+        >
+            ← Cancelar
+        </a>
+
+    </div>
+
+</body>
+
+</html>

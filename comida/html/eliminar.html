@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Eliminar comida</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .contenedor {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #f44336;
+        }
+
+        .boton {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .eliminar {
+            background: #f44336;
+        }
+
+        .cancelar {
+            background: #777;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        <h1>
+            ⚠ Eliminar comida
+        </h1>
+
+        <p>
+            ¿Estás seguro de que deseas eliminar:
+        </p>
+
+        <h2>
+            {{ comida.nombre }}
+        </h2>
+
+        <p>
+            Esta acción no se puede deshacer.
+        </p>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <button
+                class="boton eliminar"
+                type="submit"
+            >
+                Sí, eliminar
+            </button>
+
+            <a
+                class="boton cancelar"
+                href="{% url 'lista_comidas' %}"
+            >
+                Cancelar
+            </a>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

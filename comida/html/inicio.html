@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>FoodShop</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background: #ff5722;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background: #333;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        nav a:hover {
+            color: #ff5722;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .contenedor h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .contenedor p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .boton {
+            display: inline-block;
+            background: #ff5722;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+
+        .boton:hover {
+            background: #e64a19;
+        }
+
+        footer {
+            margin-top: 100px;
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>🍔 FoodShop</h1>
+
+        <p>Tu tienda de comida favorita</p>
+
+    </header>
+
+
+    <nav>
+
+        <a href="{% url 'inicio' %}">
+            Inicio
+        </a>
+
+        <a href="{% url 'lista_comidas' %}">
+            Menú
+        </a>
+
+        <a href="{% url 'crear_comida' %}">
+            Agregar comida
+        </a>
+
+    </nav>
+
+
+    <main class="contenedor">
+
+        <h2>
+            Bienvenido a FoodShop
+        </h2>
+
+        <p>
+            Encuentra las mejores comidas
+            y disfruta de nuestros productos.
+        </p>
+
+        <a
+            class="boton"
+            href="{% url 'lista_comidas' %}"
+        >
+            Ver menú
+        </a>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            FoodShop © 2026
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

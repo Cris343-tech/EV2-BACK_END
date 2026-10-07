@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Menú - FoodShop</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        header {
+            background: #ff5722;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .contenedor {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .acciones {
+            margin-bottom: 25px;
+        }
+
+        .boton {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #ff5722;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-right: 10px;
+        }
+
+        .boton:hover {
+            background: #e64a19;
+        }
+
+        .productos {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .producto {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .producto h2 {
+            color: #ff5722;
+        }
+
+        .precio {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .categoria {
+            color: #777;
+        }
+
+        .disponible {
+            color: green;
+            font-weight: bold;
+        }
+
+        .no-disponible {
+            color: red;
+            font-weight: bold;
+        }
+
+        .acciones-producto {
+            margin-top: 20px;
+        }
+
+        .editar {
+            background: #2196f3;
+        }
+
+        .eliminar {
+            background: #f44336;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>🍔 Nuestro Menú</h1>
+
+    </header>
+
+
+    <div class="contenedor">
+
+        <div class="acciones">
+
+            <a
+                class="boton"
+                href="{% url 'inicio' %}"
+            >
+                Inicio
+            </a>
+
+            <a
+                class="boton"
+                href="{% url 'crear_comida' %}"
+            >
+                + Agregar comida
+            </a>
+
+        </div>
+
+
+        <div class="productos">
+
+            {% for comida in comidas %}
+
+                <div class="producto">
+
+                    <h2>
+                        {{ comida.nombre }}
+                    </h2>
+
+                    <p>
+                        {{ comida.descripcion }}
+                    </p>
+
+                    <p class="categoria">
+
+                        Categoría:
+                        {{ comida.categoria }}
+
+                    </p>
+
+                    <p class="precio">
+
+                        ${{ comida.precio }}
+
+                    </p>
+
+
+                    {% if comida.disponible %}
+
+                        <p class="disponible">
+                            ✓ Disponible
+                        </p>
+
+                    {% else %}
+
+                        <p class="no-disponible">
+                            ✗ No disponible
+                        </p>
+
+                    {% endif %}
+
+
+                    <div class="acciones-producto">
+
+                        <a
+                            class="boton editar"
+                            href="{% url 'editar_comida' comida.id %}"
+                        >
+                            Editar
+                        </a>
+
+                        <a
+                            class="boton eliminar"
+                            href="{% url 'eliminar_comida' comida.id %}"
+                        >
+                            Eliminar
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <p>
+                    No hay comidas registradas.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
