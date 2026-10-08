@@ -5,7 +5,7 @@ from django.db import connection
 # PÁGINA PRINCIPAL
 
 def inicio(request):
-    return render(request, 'comida/inicio.html')
+    return render(request, 'inicio.html')
 
 
 # LISTAR COMIDAS
@@ -37,7 +37,7 @@ def lista_comidas(request):
 
     return render(
         request,
-        'comida/lista.html',
+        'lista.html',
         {'comidas': comidas}
     )
 
@@ -69,7 +69,7 @@ def crear_comida(request):
 
         return redirect('lista_comidas')
 
-    return render(request, 'comida/crear.html')
+    return render(request, 'crear.html')
 
 
 
@@ -131,7 +131,7 @@ def editar_comida(request, id):
 
     return render(
         request,
-        'comida/editar.html',
+        'editar.html',
         {'comida': comida}
     )
 
@@ -171,6 +171,6 @@ def eliminar_comida(request, id):
 
     return render(
         request,
-        'comida/eliminar.html',
+        'eliminar.html',
         {'comida': comida}
     )
