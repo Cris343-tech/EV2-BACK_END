@@ -83,6 +83,21 @@
             Editar comida
         </h1>
 
+        {% if form.errors %}
+            <div role="alert">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
         <form method="POST">
 
             {% csrf_token %}
@@ -95,7 +110,7 @@
             <input
                 type="text"
                 name="nombre"
-                value="{{ comida.nombre }}"
+                value="{{ form.nombre.value|default_if_none:comida.nombre }}"
                 required
             >
 
@@ -107,7 +122,7 @@
             <textarea
                 name="descripcion"
                 required
-            >{{ comida.descripcion }}</textarea>
+            >{{ form.descripcion.value|default_if_none:comida.descripcion }}</textarea>
 
 
             <label>
@@ -119,7 +134,7 @@
                 name="precio"
                 step="0.01"
                 min="0"
-                value="{{ comida.precio }}"
+                value="{{ form.precio.value|default_if_none:comida.precio }}"
                 required
             >
 
@@ -131,7 +146,7 @@
             <input
                 type="text"
                 name="categoria"
-                value="{{ comida.categoria }}"
+                value="{{ form.categoria.value|default_if_none:comida.categoria }}"
                 required
             >
 
@@ -142,7 +157,7 @@
                     class="checkbox"
                     type="checkbox"
                     name="disponible"
-                    {% if comida.disponible %}
+                    {% if form.disponible.value|default_if_none:comida.disponible %}
                         checked
                     {% endif %}
                 >

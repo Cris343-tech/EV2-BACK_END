@@ -83,6 +83,21 @@
             Agregar comida
         </h1>
 
+        {% if form.errors %}
+            <div role="alert">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
         <form method="POST">
 
             {% csrf_token %}
@@ -94,6 +109,7 @@
             <input
                 type="text"
                 name="nombre"
+                value="{{ form.nombre.value|default_if_none:'' }}"
                 required
             >
 
@@ -105,7 +121,7 @@
             <textarea
                 name="descripcion"
                 required
-            ></textarea>
+            >{{ form.descripcion.value|default_if_none:'' }}</textarea>
 
 
             <label>
@@ -117,6 +133,7 @@
                 name="precio"
                 step="0.01"
                 min="0"
+                value="{{ form.precio.value|default_if_none:'' }}"
                 required
             >
 
@@ -129,6 +146,7 @@
                 type="text"
                 name="categoria"
                 placeholder="Hamburguesas, pizzas, bebidas..."
+                value="{{ form.categoria.value|default_if_none:'' }}"
                 required
             >
 
