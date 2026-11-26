@@ -19,7 +19,7 @@ Aplicación Django para administrar comidas con persistencia en MySQL, interfaz 
 
 ## API
 
-Todas las rutas de comidas requieren el encabezado `Authorization: Token <token>`. Para obtenerlo, autentícate con credenciales de un usuario de Django:
+Todas las rutas de comidas requieren el encabezado `Authorization: Bearer <access-token>`. Para obtener los tokens, autentícate con credenciales de un usuario de Django:
 
 ```http
 POST /api/auth/login/
@@ -28,10 +28,10 @@ Content-Type: application/json
 {"username": "usuario", "password": "contraseña"}
 ```
 
-La respuesta contiene el token firmado, el tipo de autorización y su vigencia (una hora por defecto). El token se envía en las siguientes solicitudes:
+La respuesta contiene `access`, `refresh`, el tipo de autorización y la vigencia del access token (una hora por defecto).
 
 ```http
-Authorization: Token <token>
+Authorization: Bearer <access-token>
 ```
 
 | Método | Ruta | Acción |
@@ -40,10 +40,19 @@ Authorization: Token <token>
 | POST | `/api/comidas/` | Crea una comida |
 | GET | `/api/comidas/<id>/` | Consulta una comida |
 | PUT | `/api/comidas/<id>/` | Reemplaza sus campos |
-| PATCH | `/api/comidas/<id>/` | Actualiza parcialmente |
 | DELETE | `/api/comidas/<id>/` | Elimina una comida |
 
-El cuerpo debe ser JSON. Los nombres de campos compatibles con el ejemplo de productos son `title`, `description`, `price` y `category`; también se acepta `available` como booleano opcional. En la base de datos se guardan como `nombre`, `descripcion`, `precio`, `categoria` y `disponible`. El precio debe ser numérico, no negativo y tener hasta dos decimales. Las respuestas de autenticación inválida son HTTP 401, las de validación HTTP 400 y las de registros inexistentes HTTP 404.
+Endpoints adicionales:
+
+| Método | Ruta | Acción |
+|---|---|---|
+| POST | `/api/auth/login/` | Genera Access y Refresh Token |
+| POST | `/api/auth/refresh/` | Renueva el Access Token con `{"refresh": "<refresh-token>"}` |
+| POST | `/api/auth/logout/` | Revoca la sesión del Access Token |
+| GET | `/api/openapi.json` | Entrega la especificación OpenAPI |
+| GET | `/swagger/` | Interfaz Swagger |
+
+Las operaciones de escritura reciben y devuelven JSON. Los nombres de campos compatibles con el ejemplo de productos son `title`, `description`, `price` y `category`; también se acepta `available` como booleano opcional. En la base de datos se guardan como `nombre`, `descripcion`, `precio`, `categoria` y `disponible`. El precio debe ser numérico, no negativo y tener hasta dos decimales. Los errores se devuelven como JSON: autenticación inválida HTTP 401, datos inválidos HTTP 400, método no permitido HTTP 405 y registro inexistente HTTP 404.
 
 Ejemplo para crear:
 

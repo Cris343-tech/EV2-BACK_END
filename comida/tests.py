@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Comida
+from .models import Comida, UserSession
 
 
 class ComidaAPITests(TestCase):
@@ -23,8 +23,9 @@ class ComidaAPITests(TestCase):
             content_type='application/json',
         )
         self.assertEqual(response.status_code, 200)
-        self.token = response.json()['token']
-        self.client.defaults['HTTP_AUTHORIZATION'] = f'Token {self.token}'
+        self.token = response.json()['access']
+        self.refresh = response.json()['refresh']
+        self.client.defaults['HTTP_AUTHORIZATION'] = f'Bearer {self.token}'
 
     def test_api_requires_a_valid_token(self):
         self.client.defaults.pop('HTTP_AUTHORIZATION')
@@ -32,13 +33,13 @@ class ComidaAPITests(TestCase):
             self.client.get(reverse('api_comidas')).status_code,
             401,
         )
-        self.client.defaults['HTTP_AUTHORIZATION'] = 'Token invalid'
+        self.client.defaults['HTTP_AUTHORIZATION'] = 'Bearer invalid'
         self.assertEqual(
             self.client.get(reverse('api_comidas')).status_code,
             401,
         )
 
-    def test_api_crud_persists_food_and_supports_patch(self):
+    def test_api_crud_persists_food(self):
         payload = {
             'title': 'Hamburguesa',
             'description': 'Con queso',
@@ -76,18 +77,10 @@ class ComidaAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Comida.objects.get(pk=food_id).nombre, 'Hamburguesa doble')
 
-        response = self.client.patch(
-            reverse('api_comida_detail', args=[food_id]),
-            data=json.dumps({'price': 13.25}),
-            content_type='application/json',
-        )
+        response = self.client.delete(reverse('api_comida_detail', args=[food_id]))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Comida.objects.get(pk=food_id).precio, Decimal('13.25'))
-
-        self.assertEqual(
-            self.client.delete(reverse('api_comida_detail', args=[food_id])).status_code,
-            200,
-        )
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response.json()['message'], 'Comida eliminada correctamente.')
         self.assertFalse(Comida.objects.filter(pk=food_id).exists())
         self.assertEqual(
             self.client.get(reverse('api_comida_detail', args=[food_id])).status_code,
@@ -110,6 +103,22 @@ class ComidaAPITests(TestCase):
 
         response = self.client.get(reverse('api_comida_detail', args=[9999]))
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_api_returns_json_errors_for_invalid_json_and_methods(self):
+        response = self.client.post(
+            reverse('api_comidas'),
+            data='{',
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertIn('error', response.json())
+
+        response = self.client.patch(reverse('api_comida_detail', args=[1]))
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response['Allow'], 'GET, PUT, DELETE')
 
     def test_api_login_rejects_invalid_credentials(self):
         response = self.client.post(
@@ -121,6 +130,24 @@ class ComidaAPITests(TestCase):
             content_type='application/json',
         )
         self.assertEqual(response.status_code, 401)
+
+    def test_refresh_and_logout_tokens(self):
+        response = self.client.post(
+            reverse('api_refresh'),
+            data=json.dumps({'refresh': self.refresh}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 200)
+        new_access = response.json()['access']
+
+        self.client.defaults['HTTP_AUTHORIZATION'] = f'Bearer {new_access}'
+        self.assertEqual(
+            self.client.post(reverse('api_logout')).status_code,
+            200,
+        )
+        self.assertFalse(
+            UserSession.objects.filter(revoked=False).exists()
+        )
 
 
 class ComidaWebTests(TestCase):

@@ -136,6 +136,15 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+SESSION_COOKIE_AGE = int(os.environ.get('DJANGO_SESSION_AGE', 60 * 60 * 24 * 7))
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+JWT_ACCESS_TOKEN_LIFETIME = int(os.environ.get('JWT_ACCESS_TOKEN_LIFETIME', 3600))
+JWT_REFRESH_TOKEN_LIFETIME = int(os.environ.get('JWT_REFRESH_TOKEN_LIFETIME', 604800))
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
