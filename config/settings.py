@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 import pymysql
+from django.core.exceptions import ImproperlyConfigured
 
 pymysql.install_as_MySQLdb()
 
@@ -24,10 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=2d_j++nbr&qi=-j36bn38hiq2c(e+plj3_!(p)au61gjvl+d^'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() in {'true', '1', 'yes'}
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured('Set DJANGO_SECRET_KEY when DEBUG is disabled.')
+    SECRET_KEY = 'django-insecure-foodshop-local-development-only'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
@@ -43,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'comida',
 ]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -107,6 +113,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'lista_comidas'
+LOGOUT_REDIRECT_URL = 'login'
+API_TOKEN_MAX_AGE = 3600
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
@@ -124,6 +135,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+SESSION_COOKIE_AGE = int(os.environ.get('DJANGO_SESSION_AGE', 60 * 60 * 24 * 7))
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+JWT_ACCESS_TOKEN_LIFETIME = int(os.environ.get('JWT_ACCESS_TOKEN_LIFETIME', 3600))
+JWT_REFRESH_TOKEN_LIFETIME = int(os.environ.get('JWT_REFRESH_TOKEN_LIFETIME', 604800))
 
 
 # Email

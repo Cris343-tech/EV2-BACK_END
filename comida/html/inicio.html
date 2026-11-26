@@ -107,13 +107,16 @@
             Inicio
         </a>
 
-        <a href="{% url 'lista_comidas' %}">
-            Menú
-        </a>
-
-        <a href="{% url 'crear_comida' %}">
-            Agregar comida
-        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'lista_comidas' %}">Menú</a>
+            <a href="{% url 'crear_comida' %}">Agregar comida</a>
+            <form method="post" action="{% url 'logout' %}" style="display:inline">
+                {% csrf_token %}
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+        {% endif %}
 
     </nav>
 
